@@ -1,0 +1,58 @@
+# To choosing optimal_alpha
+
+optimal_alpha_tfidf = naive_bayes(X_train, y_train)
+# instantiate learning model alpha = optimal_alpha
+nb_optimal = MultinomialNB(alpha = optimal_alpha_tfidf)
+
+# fitting the model
+nb_optimal.fit(X_train, y_train)
+#knn_optimal.fit(bow_data, y_train)
+    
+# predict the response
+pred = nb_optimal.predict(x_test)
+
+# To get all the features name 
+
+tfidf_features = tf_idf_vect.get_feature_names()
+
+# To count feature for each class while fitting the model
+# Number of samples encountered for each (class, feature) during fitting
+
+feat_count = nb_optimal.feature_count_
+feat_count.shape
+
+# Number of samples encountered for each class during fitting
+
+nb_optimal.class_count_
+
+ Empirical log probability of features given a class(i.e. P(x_i|y))
+
+log_prob = nb_optimal.feature_log_prob_
+log_prob
+
+feature_prob = pd.DataFrame(log_prob, columns = tfidf_features)
+feature_prob_tr = feature_prob.T
+feature_prob_tr.shape
+
+# To show top 10 feature from both class
+print("Top 10 negative features:-\n",feature_prob_tr[0].sort_values(ascending = False)[0:10])
+print("\n\n Top 10 positive features:-\n",feature_prob_tr[1].sort_values(ascending = False)[0:10])
+
+# Accuracy on train data
+train_acc_tfidf = nb_optimal.score(X_train, y_train)
+print("Train accuracy", train_acc_tfidf)
+
+# Error on train data
+train_err_tfidf = 1-train_acc_tfidf
+print("Train Error %f%%" % (train_err_tfidf))
+
+# evaluate accuracy
+acc_tfidf = accuracy_score(y_test, pred) * 100
+print('\nThe accuracy of the naive bayes classifier for alpha = %d is %f%%' % (optimal_alpha_tfidf, acc_tfidf))
+
+#from sklearn.matrics import confusion_matrix
+cm = confusion_matrix(y_test, pred)
+cm
+
+from sklearn.metrics import classification_report
+print(classification_report(y_test, pred))
